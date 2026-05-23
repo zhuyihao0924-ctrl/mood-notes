@@ -17,7 +17,7 @@ JSONBIN_API_KEY = os.environ.get("JSONBIN_API_KEY", "").strip()
 JSONBIN_BIN_ID = os.environ.get("JSONBIN_BIN_ID", "").strip()
 ACCESS_PASSWORD = os.environ.get("MOOD_PASSWORD", "")
 
-VALID_MOODS = [
+TEXT_MOODS = [
     "开心",
     "难过",
     "生气",
@@ -26,6 +26,9 @@ VALID_MOODS = [
     "需要安慰",
     "想一个人静静",
 ]
+EMOJI_MOODS = ["😋", "🥲", "🥹", "🧐", "🤓", "😜", "😝", "😞", "😟", "😣", "😖", "☹️", "😓", "😱", "😨", "😰"]
+VALID_MOODS = TEXT_MOODS + EMOJI_MOODS
+REACTIONS = ["抱抱你", "收到啦", "想你了"]
 MAX_TEXT_LENGTH = 500
 MAX_SENDER_LENGTH = 20
 MAX_TAGS = 10
@@ -37,6 +40,23 @@ storage_lock = threading.Lock()
 
 def utc_now_iso():
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def default_reactions():
+    return {reaction: 0 for reaction in REACTIONS}
+
+
+def normalize_reactions(value):
+    reactions = default_reactions()
+    if not isinstance(value, dict):
+        return reactions
+
+    for reaction in REACTIONS:
+        try:
+            reactions[reaction] = max(0, int(value.get(reaction, 0)))
+        except (TypeError, ValueError):
+            reactions[reaction] = 0
+    return reactions
 
 
 def normalize_tags(value):
@@ -78,6 +98,7 @@ def normalize_note(note):
         "text": text[:MAX_TEXT_LENGTH],
         "sender": sender,
         "tags": normalize_tags(note.get("tags", [])),
+        "reactions": normalize_reactions(note.get("reactions", {})),
         "time": timestamp,
     }
 
@@ -255,6 +276,7 @@ def api_create_note():
         "text": text,
         "sender": sender,
         "tags": normalize_tags(data.get("tags", "")),
+        "reactions": default_reactions(),
         "time": utc_now_iso(),
     }
 
@@ -263,6 +285,28 @@ def api_create_note():
     saved = save_notes(notes)
 
     return jsonify(note), 201 if saved else 202
+
+
+@app.route("/api/notes/<int:note_id>/reactions", methods=["POST"])
+def api_add_reaction(note_id):
+    if not check_auth():
+        return unauthorized_response()
+
+    data = request.get_json(silent=True) or {}
+    reaction = str(data.get("reaction", "")).strip()
+    if reaction not in REACTIONS:
+        return jsonify({"error": "回应类型无效"}), 400
+
+    notes = load_notes()
+    for note in notes:
+        if note.get("id") == note_id:
+            reactions = normalize_reactions(note.get("reactions", {}))
+            reactions[reaction] += 1
+            note["reactions"] = reactions
+            saved = save_notes(notes)
+            return jsonify({"ok": True, "saved": saved, "note": note})
+
+    return jsonify({"error": "记录不存在"}), 404
 
 
 @app.route("/api/notes/<int:note_id>", methods=["DELETE"])
