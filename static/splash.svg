@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1600" role="img" aria-label="小蜥蜴启动页">
+  <defs>
+    <linearGradient id="g" x1="80" y1="80" x2="820" y2="1510" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff8fb"/>
+      <stop offset="0.52" stop-color="#ffd8e9"/>
+      <stop offset="1" stop-color="#d9efff"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="1600" fill="url(#g)"/>
+  <circle cx="146" cy="252" r="74" fill="#fff" opacity="0.55"/>
+  <circle cx="760" cy="345" r="96" fill="#fff" opacity="0.48"/>
+  <circle cx="706" cy="1210" r="124" fill="#fff" opacity="0.45"/>
+  <path d="M260 612c44-56 111-62 160-14 41 39 40 108-4 147-51 46-131 31-174-28-30-41-26-75 18-105Zm380 0c-44-56-111-62-160-14-41 39-40 108 4 147 51 46 131 31 174-28 30-41 26-75-18-105Z" fill="#302838"/>
+  <circle cx="450" cy="810" r="218" fill="#fff"/>
+  <circle cx="380" cy="792" r="34" fill="#302838"/>
+  <circle cx="520" cy="792" r="34" fill="#302838"/>
+  <path d="M414 870c25 24 56 24 81 0" fill="none" stroke="#e878ad" stroke-width="22" stroke-linecap="round"/>
+  <path d="M317 720c0-74 50-128 124-130M588 690c45 47 48 108 15 160" fill="none" stroke="#8bd48c" stroke-width="42" stroke-linecap="round"/>
+  <path d="M430 480c43 20 68 62 62 107-45 4-89-20-111-63l49-44Zm42 0c-43 20-68 62-62 107 45 4 89-20 111-63l-49-44Z" fill="#e878ad"/>
+  <circle cx="450" cy="537" r="32" fill="#ffbdd9"/>
+  <text x="450" y="1135" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif" font-size="54" font-weight="700" fill="#4f4655">小蜥蜴心情屋</text>
+  <text x="450" y="1208" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif" font-size="28" fill="#8a7785">今天也会认真听你说</text>
+</svg>
