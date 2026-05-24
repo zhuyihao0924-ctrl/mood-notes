@@ -29,9 +29,14 @@ JSONBIN_API_KEY=你的 JSONBin API Key
 JSONBIN_BIN_ID=你的 Bin ID
 MOOD_PASSWORD=访问密码，可选但推荐
 FLASK_DEBUG=0
+DEFAULT_WEATHER_CITY=厦门海沧
+DEEPSEEK_API_KEY=你的 DeepSeek API Key，可选
+DEEPSEEK_MODEL=deepseek-chat
 ```
 
 如果没有配置 `JSONBIN_API_KEY` 和 `JSONBIN_BIN_ID`，应用会回退到内存存储。内存存储只适合测试，Render 免费实例重启后记录会丢失。
+
+如果没有配置 `DEEPSEEK_API_KEY`，智能分析会自动使用本地规则兜底，页面不会坏。
 
 ## JSONBin 数据格式
 
@@ -67,9 +72,12 @@ FLASK_DEBUG=0
 - `POST /api/notes/<id>/reactions`：给记录增加回应，只支持 `抱抱你`、`收到啦`、`想你了`
 - `DELETE /api/notes/<id>`：删除记录
 - `GET /api/stats`：获取统计数据
+- `GET /api/weather?city=厦门海沧`：获取默认城市天气
+- `GET /api/weather?lat=...&lon=...`：获取当前位置天气
+- `GET /api/analysis`：获取小蜥蜴智能分析，优先 DeepSeek，失败时本地规则兜底
 - `GET /health`：健康检查
 
-如果设置了 `MOOD_PASSWORD`，前端会先要求输入密码，API 请求需要携带：
+如果设置了 `MOOD_PASSWORD`，前端会先要求输入密码，心情和分析 API 请求需要携带：
 
 ```text
 X-Mood-Password: 你的访问密码
@@ -77,6 +85,10 @@ X-Mood-Password: 你的访问密码
 
 ## 本次改进点
 
+- 增加四款可切换主题：奶粉、夜紫、云蓝、草莓。
+- 每款主题有独立配色和原创可爱背景元素，不使用官方版权角色素材。
+- 增加天气预报卡片：默认厦门海沧，可手动授权使用当前位置。
+- 增加智能分析提醒：配置 DeepSeek 后使用 AI；未配置时自动使用本地规则。
 - 增加表情心情：😋 🥲 🥹 🧐 🤓 😜 😝 😞 😟 😣 😖 ☹️ 😓 😱 😨 😰。
 - 增加亲密回应按钮：抱抱你、收到啦、想你了。
 - 旧数据自动补齐 `reactions`，无需手动迁移。
