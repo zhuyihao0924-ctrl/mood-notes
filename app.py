@@ -9,7 +9,7 @@ import threading
 from datetime import datetime, timezone
 
 import requests
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, send_from_directory
 
 app = Flask(__name__)
 
@@ -208,6 +208,16 @@ def save_notes(notes):
 @app.route("/")
 def index():
     return render_template("index.html", needs_password=bool(ACCESS_PASSWORD))
+
+
+@app.route("/manifest.webmanifest")
+def manifest():
+    return send_from_directory("static", "manifest.webmanifest", mimetype="application/manifest+json")
+
+
+@app.route("/sw.js")
+def service_worker():
+    return send_from_directory("static", "sw.js", mimetype="application/javascript")
 
 
 @app.route("/login", methods=["POST"])
