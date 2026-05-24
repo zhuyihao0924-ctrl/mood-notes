@@ -1,0 +1,27 @@
+{
+  "name": "小蜥蜴心情屋",
+  "short_name": "小蜥蜴",
+  "description": "每天记录心情、收到抱抱和回应的小空间。",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "fullscreen"],
+  "orientation": "portrait",
+  "background_color": "#fff4f8",
+  "theme_color": "#e878ad",
+  "categories": ["lifestyle", "productivity"],
+  "icons": [
+    {
+      "src": "/static/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/maskable-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
