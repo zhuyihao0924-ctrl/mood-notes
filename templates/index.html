@@ -60,21 +60,26 @@ button{border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .analysis strong{display:block;color:#308fd0;font-size:14px;line-height:1.45;margin-bottom:8px}
 .analysis span{display:block;font-size:12px;color:#466c82}
 .checkin{padding:16px;margin-bottom:12px}
-.check-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.check-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px}
 .check-title{font-size:17px;font-weight:900;color:var(--deep)}
+.check-right{display:flex;align-items:center;gap:8px}
 .check-stats{display:flex;gap:8px}
 .check-pill{min-width:64px;text-align:center;border-radius:16px;background:var(--soft);padding:8px 10px}
 .check-pill strong{display:block;color:var(--deep);font-size:20px;line-height:1}
 .check-pill span{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.calendar-toggle{height:36px;padding:0 12px;border-radius:999px;background:#f8fcff;border:1px solid var(--line);color:var(--deep);font-size:12px;font-weight:900;white-space:nowrap}
+.calendar-wrap{display:none}
+.checkin.open .calendar-wrap{display:block}
 .calendar-title{display:flex;align-items:center;justify-content:center;gap:14px;margin:8px 0 9px;color:#416a80;font-weight:900}
 .month-btn{width:32px;height:32px;border-radius:50%;background:#f7fcff;border:1px solid var(--line);color:var(--deep);font-weight:900}
 .week-row,.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
 .week-row{margin-bottom:5px;color:#86a7ba;font-size:11px;text-align:center;font-weight:800}
-.day{min-height:42px;border-radius:14px;background:rgba(234,247,255,.72);border:1px solid transparent;padding:4px 2px;text-align:center;position:relative}
+.day{min-height:50px;border-radius:14px;background:rgba(234,247,255,.72);border:1px solid transparent;padding:4px 2px;text-align:center;position:relative}
 .day.blank{background:transparent}
 .day.today{border-color:#64bdec;background:#f7fcff}
 .day-num{display:block;font-size:11px;color:#6f91a5;font-weight:800}
-.day-moods{font-size:16px;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.day-moods{font-size:14px;line-height:1.05;display:grid;grid-template-columns:repeat(2,1fr);gap:1px;justify-items:center;min-height:29px;overflow:hidden}
+.day-moods span{display:block;line-height:1}
 .panel,.input-card,.history{padding:16px;margin-bottom:12px}
 .label{font-size:17px;font-weight:900;color:var(--deep);margin-bottom:12px}
 .notice{display:none;margin-bottom:12px;border-radius:18px;background:#eaf7ff;padding:11px 12px;color:#2e719c;font-size:13px}
@@ -140,6 +145,9 @@ button{border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
   .mood-grid{grid-template-columns:repeat(5,1fr)}
   .filters{grid-template-columns:repeat(3,1fr)}
   .form-grid{grid-template-columns:1fr}
+  .check-head{align-items:flex-start}
+  .check-right{align-items:flex-end;flex-direction:column}
+  .check-pill{min-width:56px}
 }
 </style>
 </head>
@@ -187,17 +195,22 @@ button{border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
     </div>
   </section>
 
-  <section class="card checkin">
+  <section class="card checkin" id="checkinCard">
     <div class="check-head">
       <div class="check-title">🗓️ 打卡日期</div>
-      <div class="check-stats">
-        <div class="check-pill"><strong id="streakCount">0</strong><span>连续</span></div>
-        <div class="check-pill"><strong id="monthCount">0</strong><span>本月</span></div>
+      <div class="check-right">
+        <div class="check-stats">
+          <div class="check-pill"><strong id="streakCount">0</strong><span>连续</span></div>
+          <div class="check-pill"><strong id="monthCount">0</strong><span>本月</span></div>
+        </div>
+        <button class="calendar-toggle" id="calendarToggle" type="button">查看日历</button>
       </div>
     </div>
-    <div class="calendar-title"><button class="month-btn" id="prevMonth">‹</button><span id="calendarTitle">2026年05月</span><button class="month-btn" id="nextMonth">›</button></div>
-    <div class="week-row"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
-    <div class="calendar-grid" id="calendarGrid"></div>
+    <div class="calendar-wrap" id="calendarWrap">
+      <div class="calendar-title"><button class="month-btn" id="prevMonth">‹</button><span id="calendarTitle">2026年05月</span><button class="month-btn" id="nextMonth">›</button></div>
+      <div class="week-row"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </div>
   </section>
 
   <section class="card panel">
@@ -232,7 +245,7 @@ const TEXT_MOODS=[{name:'开心',emoji:'😊'},{name:'难过',emoji:'😢'},{nam
 const EMOJI_MOODS=['😋','🥲','🥹','🧐','🤓','😜','😝','😞','😟','😣','😖','☹️','😓','😱','😨','😰'].map(value=>({name:value,emoji:value}));
 const MOODS=[...TEXT_MOODS,...EMOJI_MOODS];
 const REACTIONS=[{name:'抱抱你',emoji:'🤗'},{name:'收到啦',emoji:'💌'},{name:'想你了',emoji:'💗'}];
-let authPassword=localStorage.getItem('moodPassword')||'',selectedMoods=[],notes=[],currentFilter='all',toastTimer=null,reactingId=null,calendarDate=new Date();
+let authPassword=localStorage.getItem('moodPassword')||'',selectedMoods=[],notes=[],currentFilter='all',toastTimer=null,reactingId=null,calendarDate=new Date(),calendarOpen=false;
 const $=id=>document.getElementById(id);
 const moodGrid=$('moodGrid'),filters=$('filters'),historyList=$('historyList'),loading=$('loading'),toast=$('toast'),notice=$('notice'),noticeText=$('noticeText'),noteText=$('noteText'),submitBtn=$('submitBtn'),senderInput=$('senderInput'),tagsInput=$('tagsInput'),counter=$('counter');
 function headers(){const value={'Content-Type':'application/json'};if(authPassword)value['X-Mood-Password']=authPassword;return value}
@@ -262,12 +275,14 @@ async function deleteNote(id){if(!confirm('确定删除这条记录吗？'))retu
 async function doLogin(){const password=$('passwordInput').value.trim();if(!password)return;try{const res=await fetch('/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password})});if(!res.ok){showToast('密码不正确');return}authPassword=password;localStorage.setItem('moodPassword',password);$('loginOverlay').classList.remove('show');await fetchNotes()}catch(error){showToast('验证失败')}}
 function handleUnauthorized(){authPassword='';localStorage.removeItem('moodPassword');$('loginOverlay').classList.add('show');showToast('密码已失效，请重新输入')}
 function renderHistory(){const filtered=currentFilter==='all'?notes:notes.filter(note=>String(note.mood||'').split('+').includes(currentFilter));$('totalCount').textContent=notes.length;$('latestTime').textContent=notes.length?formatTime(notes[0].time):'暂无';if(!filtered.length){historyList.innerHTML='<div class="empty">还没有记录，写下今天的心情吧。</div>';return}historyList.innerHTML=filtered.map(note=>{const moodTags=String(note.mood||'').split('+').filter(Boolean).map(name=>`<span class="mood-tag">${moodDisplay(name)}</span>`).join('');const tags=Array.isArray(note.tags)?note.tags:[];const tagHtml=tags.length?`<div class="tag-row">${tags.map(tag=>`<span class="tag">#${escapeHtml(tag)}</span>`).join('')}</div>`:'';const reactions=noteReactions(note);const reactionHtml=`<div class="reaction-row">${REACTIONS.map(item=>{const key=`${note.id}:${item.name}`;return`<button class="reaction-btn" onclick="addReaction(${Number(note.id)}, '${item.name}')" ${reactingId===key?'disabled':''}>${item.emoji} ${item.name} ${Number(reactions[item.name]||0)}</button>`}).join('')}</div>`;return`<article class="note"><div class="note-top"><div class="mood-tags">${moodTags}</div><span class="time">${formatTime(note.time)}</span></div><div class="meta">来自 ${escapeHtml(note.sender||'匿名')}</div><div class="note-text">${escapeHtml(note.text)}</div>${tagHtml}${reactionHtml}<button class="delete-btn" onclick="deleteNote(${Number(note.id)})">删除</button></article>`}).join('')}
-function renderCalendar(){const year=calendarDate.getFullYear();const month=calendarDate.getMonth();$('calendarTitle').textContent=`${year}年${String(month+1).padStart(2,'0')}月`;const byDay={};notes.forEach(note=>{const day=localDayKey(note.time);if(!day)return;byDay[day]=byDay[day]||[];byDay[day].push(...String(note.mood||'').split('+').filter(Boolean))});const first=new Date(year,month,1);const days=new Date(year,month+1,0).getDate();const start=(first.getDay()+6)%7;let html='';for(let i=0;i<start;i++)html+='<div class="day blank"></div>';const todayKey=localDayKey(new Date().toISOString());let monthCount=0;for(let d=1;d<=days;d++){const key=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const moods=byDay[key]||[];if(moods.length)monthCount++;const icons=[...new Set(moods.map(name=>moodInfo(name).emoji))].slice(0,2).join('');html+=`<div class="day ${key===todayKey?'today':''}"><span class="day-num">${d}</span><div class="day-moods">${icons}</div></div>`}$('calendarGrid').innerHTML=html;$('monthCount').textContent=monthCount;$('streakCount').textContent=countStreak(byDay)}
+function renderCalendar(){const year=calendarDate.getFullYear();const month=calendarDate.getMonth();$('calendarTitle').textContent=`${year}年${String(month+1).padStart(2,'0')}月`;const byDay={};notes.forEach(note=>{const day=localDayKey(note.time);if(!day)return;byDay[day]=byDay[day]||[];byDay[day].push(...String(note.mood||'').split('+').filter(Boolean))});const first=new Date(year,month,1);const days=new Date(year,month+1,0).getDate();const start=(first.getDay()+6)%7;let html='';for(let i=0;i<start;i++)html+='<div class="day blank"></div>';const todayKey=localDayKey(new Date().toISOString());let monthCount=0;for(let d=1;d<=days;d++){const key=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const moods=byDay[key]||[];if(moods.length)monthCount++;const icons=[...new Set(moods.map(name=>moodInfo(name).emoji))].slice(0,4).map(icon=>`<span>${icon}</span>`).join('');html+=`<div class="day ${key===todayKey?'today':''}"><span class="day-num">${d}</span><div class="day-moods">${icons}</div></div>`}$('calendarGrid').innerHTML=html;$('monthCount').textContent=monthCount;$('streakCount').textContent=countStreak(byDay)}
+function toggleCalendar(){calendarOpen=!calendarOpen;$('checkinCard').classList.toggle('open',calendarOpen);$('calendarToggle').textContent=calendarOpen?'收起':'查看日历';if(calendarOpen)renderCalendar()}
 function countStreak(byDay){let streak=0;const cursor=new Date();for(;;){const key=localDayKey(cursor.toISOString());if(!byDay[key])break;streak++;cursor.setDate(cursor.getDate()-1)}return streak}
 moodGrid.addEventListener('click',event=>{const button=event.target.closest('.mood-btn');if(!button)return;const mood=button.dataset.mood;if(selectedMoods.includes(mood)){selectedMoods=selectedMoods.filter(item=>item!==mood);button.classList.remove('selected')}else{if(selectedMoods.length>=3){showToast('一次最多选择 3 种心情');return}selectedMoods.push(mood);button.classList.add('selected')}updateNotice();updateSelectedStrip()});
 filters.addEventListener('click',event=>{const button=event.target.closest('.filter');if(!button)return;currentFilter=button.dataset.filter;renderFilters();renderHistory()});
 $('prevMonth').addEventListener('click',()=>{calendarDate.setMonth(calendarDate.getMonth()-1);renderCalendar()});
 $('nextMonth').addEventListener('click',()=>{calendarDate.setMonth(calendarDate.getMonth()+1);renderCalendar()});
+$('calendarToggle').addEventListener('click',toggleCalendar);
 noteText.addEventListener('input',()=>{counter.textContent=`${noteText.value.length}/500`});
 $('passwordInput').addEventListener('keydown',event=>{if(event.key==='Enter')doLogin()});
 window.addEventListener('load',()=>{setTimeout(()=>$('splash').classList.add('hide'),450)});
