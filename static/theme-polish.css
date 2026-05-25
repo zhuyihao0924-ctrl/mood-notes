@@ -10,6 +10,7 @@
   --mascot-left: "🐰";
   --mascot-right: "🦎";
   --scene-extra: "🌸";
+  --scene-image: url("/static/themes/milk-scene.svg?v=skin3");
   --scene-pattern: radial-gradient(circle at 14% 20%, rgba(255,255,255,.95) 0 24px, transparent 25px),
                    radial-gradient(circle at 23% 16%, rgba(255,255,255,.75) 0 20px, transparent 21px),
                    radial-gradient(circle at 82% 18%, rgba(255,255,255,.72) 0 30px, transparent 31px),
@@ -29,6 +30,7 @@ html[data-theme="night"] {
   --mascot-left: "☾";
   --mascot-right: "🦎";
   --scene-extra: "🦇";
+  --scene-image: url("/static/themes/night-scene.svg?v=skin3");
   --scene-pattern: radial-gradient(circle at 18% 22%, rgba(221,150,255,.22) 0 28px, transparent 29px),
                    radial-gradient(circle at 86% 18%, rgba(125,74,205,.35) 0 38px, transparent 39px),
                    radial-gradient(circle at 12% 70%, rgba(255,120,210,.22) 0 4px, transparent 5px),
@@ -47,6 +49,7 @@ html[data-theme="blue"] {
   --mascot-left: "☁️";
   --mascot-right: "🦎";
   --scene-extra: "🌈";
+  --scene-image: url("/static/themes/blue-scene.svg?v=skin3");
   --scene-pattern: radial-gradient(circle at 14% 24%, rgba(255,255,255,.98) 0 32px, transparent 33px),
                    radial-gradient(circle at 29% 18%, rgba(255,255,255,.82) 0 24px, transparent 25px),
                    radial-gradient(circle at 83% 22%, rgba(255,255,255,.78) 0 34px, transparent 35px),
@@ -65,6 +68,7 @@ html[data-theme="berry"] {
   --mascot-left: "🌷";
   --mascot-right: "🦎";
   --scene-extra: "🍓";
+  --scene-image: url("/static/themes/berry-scene.svg?v=skin3");
   --scene-pattern: repeating-linear-gradient(90deg, rgba(255,120,143,.10) 0 16px, transparent 16px 32px),
                    radial-gradient(circle at 16% 18%, rgba(255,255,255,.82) 0 22px, transparent 23px),
                    radial-gradient(circle at 84% 17%, rgba(255,145,165,.26) 0 34px, transparent 35px),
@@ -90,6 +94,10 @@ body::after {
     radial-gradient(circle at 84% 94%, rgba(255,255,255,.75), transparent 18%) !important;
 }
 
+.app::before {
+  display: none !important;
+}
+
 .app {
   width: min(414px, 100%) !important;
   padding: calc(8px + var(--safe-top)) 14px calc(92px + var(--safe-bottom)) !important;
@@ -111,37 +119,29 @@ body::after {
 }
 
 .hero {
-  height: 178px !important;
+  height: 206px !important;
   margin: 0 0 12px !important;
-  padding-top: 29px !important;
+  padding-top: 34px !important;
   border-radius: 24px !important;
   background:
-    var(--scene-pattern),
-    linear-gradient(180deg, var(--scene-top), var(--scene-bottom)) !important;
+    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.06)),
+    var(--scene-image) center / cover no-repeat !important;
   box-shadow: var(--theme-shadow) !important;
   border: 1px solid rgba(255,255,255,.64) !important;
 }
 
 .hero::before {
-  content: var(--mascot-left) !important;
-  left: 25px !important;
-  top: 48px !important;
-  font-size: 70px !important;
-  transform: rotate(-8deg);
-  opacity: .96 !important;
+  content: "" !important;
+  display: none !important;
 }
 
 .hero::after {
-  content: var(--mascot-right) "  " var(--scene-extra) !important;
-  right: 22px !important;
-  top: 58px !important;
-  font-size: 52px !important;
-  opacity: .92 !important;
-  filter: drop-shadow(0 10px 14px rgba(255,255,255,.58));
+  content: "" !important;
+  display: none !important;
 }
 
 .hero-title {
-  margin-top: 12px !important;
+  margin-top: 21px !important;
   font-size: 27px !important;
   color: var(--deep) !important;
 }
@@ -152,7 +152,7 @@ body::after {
 }
 
 .quote {
-  margin: -6px 7px 12px !important;
+  margin: -20px 7px 12px !important;
   border-radius: 22px !important;
   background: var(--bubble) !important;
   border-color: rgba(255,255,255,.72) !important;
@@ -332,7 +332,7 @@ html[data-theme="blue"] .hero::before {
   }
 
   .hero {
-    height: 166px !important;
+    height: 194px !important;
   }
 
   .hero-title {
